@@ -5,15 +5,18 @@ import requests
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from datetime import date
+import pandas as pd
 
 from .filter import SaleFilter
 from .serializers import SaleSerializer
 from .models import Sale
 from .pagination import SalePagination
 
+
 from stock.models import Stock
 from backend.settings import BASE_URL
-
+from account.models import Account
 
 class SaleView(ListAPIView):
     #permission_classes = (IsAuthenticated,)
@@ -51,7 +54,26 @@ class SaleView(ListAPIView):
         if sale.is_valid() and self.isItemCodeValid(request):
             if self.updateStock(request):
                 sale.save()
-                return Response({"status":"successful"},status=status.HTTP_200_OK)
+                acc = Account.objects.filter(date=date.today(),reason="Sales").first()
+                df = pd.DataFrame(request.data)
+                if acc:
+                    amount = acc.amount + float(df['total'].sum())
+                    json = {"amount":float(amount)}
+                    if requests.patch(BASE_URL+'account/change/',
+                            json=json,headers=request.headers).status_code == 200:
+                        return Response({"status":"successful"},status=status.HTTP_200_OK)
+                    else:
+                        return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
+                
+                json = {"amount":float(df['total'].sum()),"reason":"Sales",}
+                print("post")
+                if requests.post(BASE_URL+'account/change/',
+                        json=[json,],headers=request.headers).status_code == 200:
+                    return Response({"status":"successful"},status=status.HTTP_200_OK)
+                
+                else:
+                    return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
+
             else:
                 return Response({"status":"error","errors":[{"quantity":"Stock update failed"}]},
                                 status=status.HTTP_400_BAD_REQUEST)

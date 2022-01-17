@@ -1,9 +1,11 @@
+from functools import partial
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
+from datetime import date
 
 from .filter import AccountFilter
 from .pagination import AccountPagination
@@ -53,6 +55,15 @@ class AccountView(ListAPIView):
             else:
                 return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
         except:
+            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self,request):
+        acc = Account.objects.filter(date=date.today(),reason="Sales").first()
+        expense = AccountSerializer(acc,data=request.data,partial = True)
+        if expense.is_valid():
+            expense.save()
+            return Response({"status":"successful"},status=status.HTTP_200_OK)
+        else:
             return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
       
 
