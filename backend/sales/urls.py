@@ -1,8 +1,10 @@
 from django.urls import path
 
-from .views import SaleView
+from .views import SaleView, BillView
 
 urlpatterns = [
-    path('<str:u>/',SaleView.as_view()),
-    path('<str:u>/<int:c>/',SaleView.as_view())
+    path('bill/<int:c>/',BillView.as_view()),
+    path('bill/',BillView.as_view()),
+    path('<int:c>/',SaleView.as_view()),
+    path('',SaleView.as_view())
 ]

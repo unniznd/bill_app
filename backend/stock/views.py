@@ -26,64 +26,61 @@ class StockView(ListAPIView):
         '^itemName',
     )
 
-    def get(self,request,u,c = None):
-        if u == "all":
-            if c:
-                try:
-                    item = Stock.objects.get(itemCode=int(c))
-                    itemSerializer = StockSerializers(item,)
-                    return Response(itemSerializer.data,status=status.HTTP_200_OK)
-                
-                except:
-                    return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
-            
-            items = self.filter_queryset(Stock.objects.get_queryset().order_by('itemCode'))
-            results = self.paginate_queryset(items,)
-        
-            itemSerializer = StockSerializers(results,many=True)
-            return self.get_paginated_response(itemSerializer.data)
-        else:
-            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
-    
-    def post(self, request,u):
-        if (u == 'add'):
-            addItem = StockSerializers(data=request.data,many=True)
-            if(addItem.is_valid()):
-                addItem.save()
-                return Response({"status":"successful"},status=status.HTTP_201_CREATED)
-                
-            else:
-                return Response({"status":"error","errors":addItem.errors},status=status.HTTP_400_BAD_REQUEST)
-        
-        else:
-            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
-
-    def patch(self,request,u):
-        if u ==  "update":
-            try:
-                item = Stock.objects.get(itemCode=request.data.pop("itemCode"))
-                itemUpdate = StockSerializers(item,data=request.data,partial=True)
-                if itemUpdate.is_valid():
-                    itemUpdate.save()
-                    return Response({"status":"successful"},status=status.HTTP_200_OK)
-                        
-                else:
-                    return Response({"status":"error","errors":itemUpdate.errors},status=status.HTTP_400_BAD_REQUEST)
-            
-            except:
-                return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self,request,u,c):
-        if u == "delete":
+    def get(self,request,c = None):
+       
+        if c:
             try:
                 item = Stock.objects.get(itemCode=int(c))
-                item.delete()
-                return Response({"status":"successful"},status=status.HTTP_200_OK)
+                itemSerializer = StockSerializers(item,)
+                return Response(itemSerializer.data,status=status.HTTP_200_OK)
+            
             except:
                 return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
-
-        else:
-            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
+        
+        items = self.filter_queryset(Stock.objects.get_queryset().order_by('itemCode'))
+        results = self.paginate_queryset(items,)
     
+        itemSerializer = StockSerializers(results,many=True)
+        return self.get_paginated_response(itemSerializer.data)
+       
+    
+    def post(self, request):
+        
+        addItem = StockSerializers(data=request.data,many=True)
+        if(addItem.is_valid()):
+            addItem.save()
+            return Response({"status":"successful"},status=status.HTTP_201_CREATED)
+            
+        else:
+            return Response({"status":"error","errors":addItem.errors},status=status.HTTP_400_BAD_REQUEST)
+    
+      
+
+    def patch(self,request,c):
+      
+        try:
+            item = Stock.objects.get(itemCode=int(c))
+            print(request.data.pop("itemCode"))
+            print(request.data)
+            itemUpdate = StockSerializers(item,data=request.data,partial=True)
+            print("if")
+            if itemUpdate.is_valid():
+                itemUpdate.save()
+                return Response({"status":"successful"},status=status.HTTP_200_OK)
+                    
+            else:
+                return Response({"status":"error","errors":itemUpdate.errors},status=status.HTTP_400_BAD_REQUEST)
+        
+        except:
+            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
+       
+    def delete(self,request,c):
+
+        try:
+            item = Stock.objects.get(itemCode=int(c))
+            item.delete()
+            return Response({"status":"successful"},status=status.HTTP_200_OK)
+        except:
+            return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
+
+       
