@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', CustomAuthToken.as_view()),
     path('stock/',include('stock.urls')),
-    path('account/',include('accounts.urls')),
-    path('expense/',include('expense.urls')),
+    path('sales/',include('sales.urls')),
+    path('account/',include('account.urls')),
     path('logout/',Logout.as_view())
 ]
