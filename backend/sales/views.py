@@ -19,7 +19,7 @@ from backend.settings import BASE_URL
 from account.models import Account
 
 class SaleView(ListAPIView):
-    #permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     pagination_class = SalePagination
     serializer_class = SaleSerializer
