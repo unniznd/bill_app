@@ -11,6 +11,7 @@ from .filter import AccountFilter
 from .pagination import AccountPagination
 from .models import Account
 from .serializers import AccountSerializer
+from .algo import income, expense
 
 class AccountView(ListAPIView):
 
@@ -67,3 +68,11 @@ class AccountView(ListAPIView):
             return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
       
 
+class AccountReportView(ListAPIView):
+    def get(self,request):
+        json = {
+            "income":income(),
+            "expense":expense(),
+            "inHand":income()- expense()
+        }
+        return Response(json, status=status.HTTP_200_OK)
