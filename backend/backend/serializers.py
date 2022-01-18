@@ -11,22 +11,25 @@ from cryptography.fernet import Fernet
 class CustomAuthToken(ObtainAuthToken):
    
     def post(self, request, *args, **kwargs):
-        key = b'IkB0Lq7xZHzfSLgVnvDjBm8mXe6jQclfMUyfaoAUK4E='
-        
-        fernet = Fernet(key)
-        request.data._mutable = True
-        request.data['password'] = fernet.decrypt(request.data['password'].encode('utf-8')).decode()
-        request.data._mutable = False
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        print(user.first_name)
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-        })
+        try:
+            key = b'IkB0Lq7xZHzfSLgVnvDjBm8mXe6jQclfMUyfaoAUK4E='
+            
+            fernet = Fernet(key)
+            request.data._mutable = True
+            request.data['password'] = fernet.decrypt(request.data['password'].encode('utf-8')).decode()
+            request.data._mutable = False
+            serializer = self.serializer_class(data=request.data,
+                                            context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            user = serializer.validated_data['user']
+            print(user.first_name)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'user_id': user.pk,
+            })
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class Logout(ListAPIView):
     permission_classes = (IsAuthenticated,) 
