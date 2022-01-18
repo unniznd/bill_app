@@ -9,13 +9,7 @@ from django.contrib.auth.models import User
 
 
 class CustomAuthToken(ObtainAuthToken):
-    def get(self,request):
-        user = User.objects.filter(id = request.data['user_id']).first()
-        return Response({
-            "first_name":user.first_name,
-            "last_name":user.last_name
-        })
-
+   
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -33,3 +27,12 @@ class Logout(ListAPIView):
     def get(self, request, format=None):
         request.user.auth_token.delete()
         return Response({"status":"success"},status=status.HTTP_200_OK)
+
+class UserDetail(ListAPIView):
+    permission_classes = (IsAuthenticated,) 
+    def get(self,request):
+        user = Token.objects.get(key=request.auth.key).user
+        return Response({
+            "first_name":user.first_name,
+            "last_name":user.last_name
+        })

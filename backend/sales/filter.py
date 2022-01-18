@@ -9,7 +9,6 @@ class SaleFilter(FilterSet):
     itemCode = NumberFilter(field_name="itemCode")
     date = DateFromToRangeFilter(field_name="date")
     credit  = BooleanFilter(field_name="credit")
-    income = BooleanFilter(field_name="income")
 
 
     class Meta:

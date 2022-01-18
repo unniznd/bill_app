@@ -11,7 +11,7 @@ from .models import Stock
 
 
 class StockView(ListAPIView):
-    premission_class = (IsAuthenticated,)
+    #premission_class = (IsAuthenticated,)
 
     pagination_class = StockPagination
     serializer_class = StockSerializers
