@@ -28,7 +28,7 @@ class _BillingAppState extends State<BillingApp> {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: HomeScreen(),
+      home: LoginScreen(),
       // home: FutureBuilder(
       //   future: storage.read(key: "token"),
       //   builder: (context, snapshot) {

@@ -3,10 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../main.dart';
 
-Future<bool> authenticate(String username, String password) async {
+Future<bool> authenticate(String username, var password) async {
   var response = await http.post(
     Uri.parse(BASE_URL + 'login/'),
-    body: {"username": username, "password": password},
+    body: {"username": username, "password": password.toString()},
   );
 
   if (response.statusCode == 200) {

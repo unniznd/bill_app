@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../backend/auth.dart';
 import './home.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -68,7 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (username.text != '' && password.text != '') {
-                      if (await authenticate(username.text, password.text)) {
+                      final key = encrypt.Key.fromBase64(
+                          'IkB0Lq7xZHzfSLgVnvDjBm8mXe6jQclfMUyfaoAUK4E=');
+
+                      final fernet = encrypt.Fernet(key);
+                      final encrypter = encrypt.Encrypter(fernet);
+                      final txt = encrypter.encrypt(password.text);
+                      if (await authenticate(username.text, txt.base64)) {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => HomeScreen(),

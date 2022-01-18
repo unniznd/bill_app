@@ -5,12 +5,18 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from django.contrib.auth.models import User
+from cryptography.fernet import Fernet
 
 
 class CustomAuthToken(ObtainAuthToken):
    
     def post(self, request, *args, **kwargs):
+        key = b'IkB0Lq7xZHzfSLgVnvDjBm8mXe6jQclfMUyfaoAUK4E='
+        
+        fernet = Fernet(key)
+        request.data._mutable = True
+        request.data['password'] = fernet.decrypt(request.data['password'].encode('utf-8')).decode()
+        request.data._mutable = False
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
