@@ -5,16 +5,23 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-
+from django.contrib.auth.models import User
 
 
 class CustomAuthToken(ObtainAuthToken):
+    def get(self,request):
+        user = User.objects.filter(id = request.data['user_id']).first()
+        return Response({
+            "first_name":user.first_name,
+            "last_name":user.last_name
+        })
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        print(user.first_name)
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
