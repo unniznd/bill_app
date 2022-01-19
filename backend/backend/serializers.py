@@ -12,9 +12,9 @@ class CustomAuthToken(ObtainAuthToken):
    
     def post(self, request, *args, **kwargs):
         try:
-            key = b'IkB0Lq7xZHzfSLgVnvDjBm8mXe6jQclfMUyfaoAUK4E='
+            _key = b'IkB0Lq7xZHzfSLgVnvDjBm8mXe6jQclfMUyfaoAUK4E='
             
-            fernet = Fernet(key)
+            fernet = Fernet(_key)
             request.data._mutable = True
             request.data['password'] = fernet.decrypt(request.data['password'].encode('utf-8')).decode()
             request.data._mutable = False
@@ -24,6 +24,7 @@ class CustomAuthToken(ObtainAuthToken):
             user = serializer.validated_data['user']
             print(user.first_name)
             token, created = Token.objects.get_or_create(user=user)
+
             
             return Response({
                 'token': token.key,

@@ -11,7 +11,7 @@ Future<bool> authenticate(String username, var password) async {
 
   if (response.statusCode == 200) {
     final Map auth = json.decode(response.body);
-
+    print(auth['token']);
     await storage.write(key: "token", value: auth['token']);
     return true;
   }

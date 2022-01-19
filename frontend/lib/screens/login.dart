@@ -73,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       final fernet = encrypt.Fernet(key);
                       final encrypter = encrypt.Encrypter(fernet);
+
                       final txt = encrypter.encrypt(password.text);
                       if (await authenticate(username.text, txt.base64)) {
                         Navigator.of(context).pushReplacement(
