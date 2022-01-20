@@ -164,3 +164,4 @@ class BillView(ListAPIView):
         sale = self.filter_queryset(Sale.objects.get_queryset().order_by('-billnumber','-date','-time'))
         results = self.paginate_queryset(sale,)
         saleSerializer = SaleSerializer(results,many=True)
+        return Response(saleSerializer.data,status=status.HTTP_200_OK)

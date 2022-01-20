@@ -37,11 +37,11 @@ class StockView(ListAPIView):
             except:
                 return Response({"status":"error"},status=status.HTTP_400_BAD_REQUEST)
         
-        items = self.filter_queryset(Stock.objects.get_queryset().order_by('itemCode'))
-        results = self.paginate_queryset(items,)
+        items = Stock.objects.get_queryset().order_by('itemCode')
+        
     
-        itemSerializer = StockSerializers(results,many=True)
-        return self.get_paginated_response(itemSerializer.data)
+        itemSerializer = StockSerializers(items,many=True)
+        return Response(itemSerializer.data,status=status.HTTP_200_OK)
        
     
     def post(self, request):

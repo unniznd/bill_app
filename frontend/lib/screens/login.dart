@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../backend/auth.dart';
-import './home.dart';
+import 'layout.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'dart:convert';
 
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (await authenticate(username.text, txt.base64)) {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
+                            builder: (context) => LayoutScreen(),
                           ),
                         );
                       } else {

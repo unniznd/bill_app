@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/home.dart';
+import 'package:frontend/backend/bill_back.dart';
+import 'package:frontend/provider/bill_provider.dart';
+import 'package:frontend/provider/layout_provider.dart';
+import 'package:frontend/screens/bill.dart';
+import 'package:frontend/screens/layout.dart';
+import 'package:provider/provider.dart';
 import './screens/login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'backend/config.dart';
@@ -23,25 +28,31 @@ class BillingApp extends StatefulWidget {
 class _BillingAppState extends State<BillingApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: LoginScreen(),
-      // home: FutureBuilder(
-      //   future: storage.read(key: "token"),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.done) {
-      //       if (snapshot.data == null) {
-      //         return LoginScreen();
-      //       }
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BillProvider()),
+        ChangeNotifierProvider(create: (_) => LayoutProvider())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          scaffoldBackgroundColor: Colors.white,
+        ),
+        // home: LayoutScreen(),
+        home: FutureBuilder(
+          future: storage.read(key: "token"),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data == null) {
+                return LoginScreen();
+              }
 
-      //       return HomeScreen();
-      //     }
-      //     return Scaffold();
-      //   },
-      // ),
+              return LayoutScreen();
+            }
+            return Scaffold();
+          },
+        ),
+      ),
     );
   }
 }
